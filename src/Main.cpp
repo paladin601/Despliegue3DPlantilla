@@ -1,8 +1,11 @@
 #include "Main.h"
 #include "Model.h"
 #include "SOff.h"
+#include "OffLoader.h"
 #include "UserInterface.h"
-
+#include <iostream> 
+#include <fstream> 
+using namespace std;
 using std::vector;
 
 GLFWwindow *gWindow;
@@ -19,7 +22,7 @@ void updateUserInterface()
 
 void display()
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0);
+	glClearColor(0.25f, 0.25f, 0.25f, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
@@ -137,12 +140,15 @@ bool initUserInterface()
 bool initScene()
 {
 	CSOff* soff = new CSOff();
-	
-	if(!soff->load("../files/cube.soff"))
-		return false;
-	
-	models.push_back(soff);
+	OffLoader* offLoader = new OffLoader();
 
+	/*if(!soff->load("../files/dragon.off"))
+		return false;*/
+	
+	if (!offLoader->load("../files/teapot.off"))
+		return false;
+
+	models.push_back(offLoader);
 	return true;
 }
 
@@ -179,4 +185,25 @@ int main(void)
 	destroy();
 
 	return EXIT_SUCCESS;
+}
+
+void beginLoad(string path) {
+	//ifstream infile(path);
+	string aux = path;
+	string extension = aux.erase(0, aux.find(".") + 1);
+	cout << "extension: " << extension << endl;
+	//Caso archivo OFF:
+	if (extension == "soff" || extension == "SOFF") {
+		CSOff* coff = new CSOff();
+		if (!coff->load(path))
+			return;
+		models.push_back(coff);
+	}
+	//Caso archivo OBJ:
+	else if (extension == "off" || extension == "OFF") {
+		OffLoader* offLoader = new OffLoader();
+		if (!offLoader->load(path))
+			return;
+		models.push_back(offLoader);
+	}
 }

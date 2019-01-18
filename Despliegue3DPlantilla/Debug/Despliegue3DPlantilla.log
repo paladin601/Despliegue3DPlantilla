@@ -1,2 +1,5 @@
-﻿  Main.cpp
-LINK : fatal error LNK1168: cannot open C:\Users\Jesus\Documents\UCV\Despliegue3DPlantilla\Debug\Despliegue3DPlantilla.exe for writing
+﻿  Model.cpp
+c:\users\leonardo\desktop\despliegue3dplantilla-master\src\model.cpp(38): warning C4101: 'm': variable local sin referencia
+  OffLoader.cpp
+  Generando código...
+  Despliegue3DPlantilla.vcxproj -> C:\Users\Leonardo\Desktop\Despliegue3DPlantilla-master\Debug\Despliegue3DPlantilla.exe

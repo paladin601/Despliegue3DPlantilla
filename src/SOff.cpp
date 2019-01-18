@@ -16,7 +16,7 @@ bool CSOff::load(string path)
 	file.open(path, std::ios::in);
 
 	file >> token;
-
+	printf("%c",token[4]);
 	if (token != "SOFF")
 	{
 		file.close();

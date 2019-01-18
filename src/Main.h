@@ -1,6 +1,8 @@
 #define GLFW_INCLUDE_GLU
 #include "../headers/glfw3.h"
 #include <vector>
+#include <iostream>
+using namespace std;
 
 void updateUserInterface();
 

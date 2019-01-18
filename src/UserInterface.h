@@ -6,15 +6,19 @@
 #include <string>
 
 using std::string;
+typedef enum { GL_BEGIN_GL_END, DISPLAY_LIST, VERTEX_POINTER, VBO } DEPLOY_TYPE;
 
 //Singleton user interface class
 
 class CUserInterface
 {
 private:
+
 	static CUserInterface * mInterface; //Holds the instance of the class
 	TwBar *mUserInterface;
 	glm::vec3 mModelTranslation;
+	string mDeployMode;
+	DEPLOY_TYPE m_currentDeploy;
 
 public:
 	///Method to obtain the only instance of the calls
@@ -25,6 +29,7 @@ public:
 	void hide();
 	void setModelTranslation(float *modelTranslation);
 	glm::vec3 getModelTranslation();
+	string getDeployType();
 
 
 private:

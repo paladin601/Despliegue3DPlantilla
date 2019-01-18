@@ -33,3 +33,20 @@ glm::vec3 CModel::getTranslation()
 {
 	return mTranslation;
 }
+
+void CModel::normalize() {
+	float m;
+	for (int i = 0; i < mNumOfVertices; i++) {
+
+		mVertices[i].x = (mVertices[i].x - middle.x);
+		mVertices[i].y = (mVertices[i].y - middle.y);
+		mVertices[i].z = (mVertices[i].z - middle.z);
+
+	}
+}
+
+void CModel::middlePoint() {
+	middle.x = (max.x - min.x) / 2;
+	middle.y = (max.y - min.y) / 2;
+	middle.z = (max.z - min.z) / 2;
+}
