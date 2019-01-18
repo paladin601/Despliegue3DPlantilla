@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "SOff.h"
 #include "OffLoader.h"
+#include "ObjLoader.h"
 #include "UserInterface.h"
 #include <iostream> 
 #include <fstream> 
@@ -205,5 +206,11 @@ void beginLoad(string path) {
 		if (!offLoader->load(path))
 			return;
 		models.push_back(offLoader);
+	}
+	else if (extension == "obj" || extension == "OBJ") {
+		ObjLoader* objLoader = new ObjLoader();
+		if (!objLoader->load(path))
+			return;
+		models.push_back(objLoader);
 	}
 }

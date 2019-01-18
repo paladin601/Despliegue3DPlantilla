@@ -14,82 +14,81 @@ ObjLoader::~ObjLoader()
 bool ObjLoader::load(string path)
 {
 	ifstream file;
-	string token, v1, v2, v3;
-	float f1, f2, f3, car;
+	string token, v, v1, v2;
+	float f[3], car;
 	int cont = 0;
-	file.open(path, std::ifstream::in);
-
-	while (file.good()) {
-		getline(file, token);
-		if (token[0] == 'v' || token[0] == 'f') {
-			switch (token[0])
-			{
-			case'v':
-				break;
-			case 'f':
-				break;
-			default:
-				break;
-			}
-		}
-	}
-	file >> token;
-
-
-	file >> token;
-	mNumOfVertices = atoi(token.c_str());
-	file >> token;
-	mNumOfFaces = atoi(token.c_str());
-	file >> token;
-
-	for (int i = 0; i < mNumOfVertices; i++)
-	{
-		file >> v1;
-		f1 = (float)atof(v1.c_str());
-		if (f1 > max.x) {
-			max.x = f1;
-		}
-		if (f1 < max.x) {
-			min.x = f1;
-		}
-		file >> v2;
-		f2 = (float)atof(v2.c_str());
-		if (f2 > max.y) {
-			max.y = f2;
-		}
-		if (f2 < max.y) {
-			min.y = f2;
-		}
-		file >> v3;
-		f3 = (float)atof(v3.c_str());
-		if (f3 > max.z) {
-			max.z = f3;
-		}
-		if (f3 < max.z) {
-			min.z = f3;
-		}
-		mVertices.push_back(glm::vec3(f1, f2, f3));
-	}
-	for (int i = 0; i < mNumOfFaces; i++)
-	{
+	file.open(path, std::ios::in);
+	mNumOfVertices = 0;
+	mNumOfFaces = 0;
+	while (!file.eof() ) {
 		file >> token;
-		car = (float)atof(token.c_str());
-		car -= 2;
-		file >> v1;
-		f1 = (float)atof(v1.c_str());
-		file >> v2;
-		f2 = (float)atof(v2.c_str());
-		for (int j = 0; j < car; j++) {
-			file >> v3;
-			f3 = (float)atof(v3.c_str());
-			mFaces.push_back(glm::vec3(f1, f2, f3));
-			f2 = f3;
-			cont++;
+		if (token == "v") {
+			mNumOfVertices++;
+			for (int xx = 0; xx < 3; xx++) {
+				file >> v;
+				f[xx] = (float)atof(v.c_str());
+				switch (xx)
+				{
+				case 0:
+					if (f[xx] > max.x) {
+						max.x = f[xx];
+					}
+					if (f[xx] < min.x) {
+						min.x = f[xx];
+					}
+					break;
+				case 1:
+					if (f[xx] > max.y) {
+						max.y = f[xx];
+					}
+					if (f[xx] < min.y) {
+						min.y = f[xx];
+					}
+					break;
+				default:
+					if (f[xx] > max.z) {
+						max.z = f[xx];
+					}
+					if (f[xx] < min.z) {
+						min.z = f[xx];
+					}
+					break;
+				}
+			}
+			mVertices.push_back(glm::vec3(f[0], f[1], f[2]));
+		}
+		else {
+			if (token == "f") {
+				mNumOfFaces++;
+				file >> v;
+				file >> v1;
+				file >> v2;
+				f[0] = (float)atof(v.substr(0, v.find("/")).c_str());
+				f[1] = (float)atof(v1.substr(0, v1.find("/")).c_str());
+				f[2] = (float)atof(v2.substr(0, v2.find("/")).c_str());
+				mFaces.push_back(glm::vec3(f[0], f[1], f[2]));
+			}
+			else {
+				getline(file, token);
+			}
+
 		}
 	}
-	mNumOfFaces = cont;
 	file.close();
 	middlePoint();
 	normalize();
 	return true;
+}
+
+void ObjLoader::display() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	for (int i = 0; i < mNumOfFaces; i++)
+	{
+		glBegin(GL_TRIANGLES);
+		glVertex3f(mVertices[(int)mFaces[i].x-1].x, mVertices[(int)mFaces[i].x-1].y, mVertices[(int)mFaces[i].x-1].z);
+		glVertex3f(mVertices[(int)mFaces[i].y-1].x, mVertices[(int)mFaces[i].y-1].y, mVertices[(int)mFaces[i].y-1].z);
+		glVertex3f(mVertices[(int)mFaces[i].z-1].x, mVertices[(int)mFaces[i].z-1].y, mVertices[(int)mFaces[i].z-1].z);
+		glEnd();
+	}
 }

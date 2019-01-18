@@ -1,7 +1,3 @@
-﻿  Main.cpp
-  Model.cpp
-  ObjLoader.cpp
-  OffLoader.cpp
-  SOff.cpp
-  Generando código...
+﻿  ObjLoader.cpp
+c:\users\leonardo\desktop\despliegue3dplantilla-master\src\objloader.cpp(18): warning C4101: 'car': variable local sin referencia
   Despliegue3DPlantilla.vcxproj -> C:\Users\Leonardo\Desktop\Despliegue3DPlantilla-master\Debug\Despliegue3DPlantilla.exe
