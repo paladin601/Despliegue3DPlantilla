@@ -17,8 +17,22 @@ bool ObjLoader::load(string path)
 	string token, v1, v2, v3;
 	float f1, f2, f3, car;
 	int cont = 0;
-	file.open(path, std::ios::in);
+	file.open(path, std::ifstream::in);
 
+	while (file.good()) {
+		getline(file, token);
+		if (token[0] == 'v' || token[0] == 'f') {
+			switch (token[0])
+			{
+			case'v':
+				break;
+			case 'f':
+				break;
+			default:
+				break;
+			}
+		}
+	}
 	file >> token;
 
 
@@ -72,7 +86,6 @@ bool ObjLoader::load(string path)
 			f2 = f3;
 			cont++;
 		}
-		getline(file, token);
 	}
 	mNumOfFaces = cont;
 	file.close();

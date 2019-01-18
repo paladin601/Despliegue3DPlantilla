@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-
+using namespace std;
 using std::string;
 using std::vector;
 
@@ -32,4 +32,5 @@ class CModel
 		glm::vec3 getTranslation();
 		void normalize();
 		void middlePoint();
+		float coordMax();
 };
