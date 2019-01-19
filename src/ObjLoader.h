@@ -11,6 +11,5 @@ public:
 	ObjLoader();
 	~ObjLoader();
 	bool load(string path);
-	void display();
 };
 

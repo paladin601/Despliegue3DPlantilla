@@ -12,4 +12,5 @@ class CSOff : public CModel
 		CSOff();
 		~CSOff();
 		bool load(string path);
+		void display();
 };

@@ -11,6 +11,5 @@ public:
 	OffLoader();
 	~OffLoader();
 	bool load(string path);
-	void display();
 };
 

@@ -29,7 +29,8 @@ public:
 	void hide();
 	void setModelTranslation(float *modelTranslation);
 	glm::vec3 getModelTranslation();
-	string getDeployType();
+	int getDeployType();
+	void setDeployType(int);
 
 
 private:

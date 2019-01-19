@@ -39,3 +39,16 @@ bool CSOff::load(string path)
 		return true;
 	}
 }
+
+void CSOff::display() {
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
+	for (int i = 0; i < mNumOfVertices; i += 3)
+	{
+		glBegin(GL_TRIANGLES);
+		glVertex3f(mVertices[i].x, mVertices[i].y, mVertices[i].z);
+		glVertex3f(mVertices[i + 1].x, mVertices[i + 1].y, mVertices[i + 1].z);
+		glVertex3f(mVertices[i + 2].x, mVertices[i + 2].y, mVertices[i + 2].z);
+		glEnd();
+	}
+}

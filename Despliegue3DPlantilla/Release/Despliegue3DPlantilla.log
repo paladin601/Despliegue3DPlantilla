@@ -1,9 +1,10 @@
-﻿  Obj.cpp
-..\src\Obj.cpp(35): warning C4473: 'fscanf_s' : not enough arguments passed for format string
-  ..\src\Obj.cpp(35): note: placeholders and their parameters expect 2 variadic arguments, but 1 were provided
-  ..\src\Obj.cpp(35): note: the missing variadic argument 2 is required by format string '%s'
-  ..\src\Obj.cpp(35): note: this argument is used as a buffer size
-  Generating code
-c:\users\ccg\desktop\p2\despliegue3dplantilla-master\src\obj.cpp(24): error C4700: uninitialized local variable 'file' used
-  All 495 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-LINK : fatal error LNK1257: code generation failed
+﻿  Main.cpp
+  Model.cpp
+  ObjLoader.cpp
+  OffLoader.cpp
+  SOff.cpp
+  UserInterface.cpp
+  Generando código
+  All 409 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Generación de código finalizada
+  Despliegue3DPlantilla.vcxproj -> C:\Users\Leonardo\Desktop\universidad\Despliegue3DPlantilla-master\Release\Despliegue3DPlantilla.exe

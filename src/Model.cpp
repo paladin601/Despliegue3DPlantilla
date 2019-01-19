@@ -3,6 +3,7 @@
 CModel::CModel()
 {
 	mTranslation[0] = mTranslation[1] = mTranslation[2] = 0.0f;
+	mDisplay = 1;
 }
 
 CModel::~CModel()
@@ -13,15 +14,46 @@ CModel::~CModel()
 void CModel::display()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	for (int i = 0; i < mNumOfVertices; i += 3)
+	switch (mDisplay)
+	{
+	case 0:
+		displayBeginEnd();
+		break;
+	case 1:
+		displayList();
+		break;
+	default:
+		displayList();
+		break;
+	}
+}
+void CModel::displayBeginEnd() {
+	for (int i = 0; i < mNumOfFaces; i++)
 	{
 		glBegin(GL_TRIANGLES);
-			glVertex3f(mVertices[i].x, mVertices[i].y, mVertices[i].z);
-			glVertex3f(mVertices[i + 1].x, mVertices[i + 1].y, mVertices[i + 1].z);
-			glVertex3f(mVertices[i + 2].x, mVertices[i + 2].y, mVertices[i + 2].z);
+		glVertex3f(mVertices[(int)mFaces[i].x].x, mVertices[(int)mFaces[i].x].y, mVertices[(int)mFaces[i].x].z);
+		glVertex3f(mVertices[(int)mFaces[i].y].x, mVertices[(int)mFaces[i].y].y, mVertices[(int)mFaces[i].y].z);
+		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
 		glEnd();
 	}
+}
+
+void CModel::displayList() {
+	glCallList(list);
+}
+
+void CModel::createList() {
+	list = glGenLists(1);
+	glNewList(list, GL_COMPILE);
+	for (int i = 0; i < mNumOfFaces; i++)
+	{
+		glBegin(GL_TRIANGLES);
+		glVertex3f(mVertices[(int)mFaces[i].x].x, mVertices[(int)mFaces[i].x].y, mVertices[(int)mFaces[i].x].z);
+		glVertex3f(mVertices[(int)mFaces[i].y].x, mVertices[(int)mFaces[i].y].y, mVertices[(int)mFaces[i].y].z);
+		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
+		glEnd();
+	}
+	glEndList();
 }
 
 void CModel::setTranslation(glm::vec3 translation)
@@ -35,18 +67,18 @@ glm::vec3 CModel::getTranslation()
 }
 
 void CModel::normalize() {
-	float m=coordMax();
+	float m = coordMax();
 	for (int i = 0; i < mNumOfVertices; i++) {
-		mVertices[i].x = (mVertices[i].x - middle.x)/m;
-		mVertices[i].y = (mVertices[i].y - middle.y)/m;
-		mVertices[i].z = (mVertices[i].z - middle.z)/m;
+		mVertices[i].x = (mVertices[i].x - middle.x) / m;
+		mVertices[i].y = (mVertices[i].y - middle.y) / m;
+		mVertices[i].z = (mVertices[i].z - middle.z) / m;
 	}
 }
 
 void CModel::middlePoint() {
-	middle.x = max.x - min.x;
-	middle.y = max.y - min.y;
-	middle.z = max.z - min.z;
+	middle.x = (max.x - min.x) / 2;
+	middle.y = (max.y - min.y) / 2;
+	middle.z = (max.z - min.z) / 2;
 }
 float CModel::coordMax() {
 	float m;
@@ -58,4 +90,14 @@ float CModel::coordMax() {
 		m = max.z;
 	}
 	return m;
+}
+
+int CModel::getDeployType()
+{
+	return mDisplay;
+}
+
+void CModel::setDeployType(int a)
+{
+	mDisplay = a;
 }

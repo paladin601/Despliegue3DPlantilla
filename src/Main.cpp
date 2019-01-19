@@ -19,6 +19,7 @@ void updateUserInterface()
 {
 	if (picked > -1)
 		models[picked]->setTranslation(userInterface->getModelTranslation());
+		models[picked]->setDeployType(userInterface->getDeployType());
 }
 
 void display()
@@ -28,15 +29,15 @@ void display()
 
 
 	for (unsigned int i = 0; i < models.size(); i++)
-	{	
+	{
 		glm::vec3 translation = models[i]->getTranslation();
 
 		glPushMatrix();
-			glTranslatef(translation.x, translation.y, translation.z);
-			models[i]->display();
+		glTranslatef(translation.x, translation.y, translation.z);
+		models[i]->display();
 		glPopMatrix();
 	}
-		
+
 }
 
 void reshape(GLFWwindow *window, int width, int height)
@@ -64,9 +65,9 @@ void keyInput(GLFWwindow *window, int key, int scancode, int action, int mods)
 	{
 		switch (key)
 		{
-			case GLFW_KEY_ESCAPE:
-				glfwSetWindowShouldClose(window, GL_TRUE);
-				break;
+		case GLFW_KEY_ESCAPE:
+			glfwSetWindowShouldClose(window, GL_TRUE);
+			break;
 		}
 	}
 }
@@ -140,13 +141,13 @@ bool initUserInterface()
 
 bool initScene()
 {
-	CSOff* soff = new CSOff();
-	OffLoader* offLoader = new OffLoader();
+	ObjLoader* offLoader = new ObjLoader();
 
-	/*if(!soff->load("../files/dragon.off"))
-		return false;*/
-	
-	if (!offLoader->load("../files/teapot.off"))
+	CSOff* soff = new CSOff();
+	if(!soff->load("../files/cube.soff"))
+		return false;
+
+	if (!offLoader->load("../files/Batman.obj"))
 		return false;
 
 	models.push_back(offLoader);
@@ -172,6 +173,7 @@ int main(void)
 
 	while (!glfwWindowShouldClose(gWindow))
 	{
+
 		display();
 
 		TwDraw();
@@ -189,19 +191,18 @@ int main(void)
 }
 
 void beginLoad(string path) {
-	//ifstream infile(path);
+
 	string aux = path;
 	string extension = aux.erase(0, aux.find(".") + 1);
-	cout << "extension: " << extension << endl;
-	//Caso archivo OFF:
-	if (extension == "soff" || extension == "SOFF") {
+
+	/*if (extension == "soff" || extension == "SOFF") {
 		CSOff* coff = new CSOff();
 		if (!coff->load(path))
 			return;
 		models.push_back(coff);
 	}
-	//Caso archivo OBJ:
-	else if (extension == "off" || extension == "OFF") {
+	else*/
+	if (extension == "off" || extension == "OFF") {
 		OffLoader* offLoader = new OffLoader();
 		if (!offLoader->load(path))
 			return;

@@ -26,7 +26,7 @@ CUserInterface * CUserInterface::Instance()
 CUserInterface::CUserInterface()
 {
 	mUserInterface = TwNewBar("Model");
-	m_currentDeploy = GL_BEGIN_GL_END;
+	m_currentDeploy = DISPLAY_LIST;
 	TwDefine("Model refresh = '0.0001f'");
 	TwDefine("Model resizable = false");
 	TwDefine("Model fontresizable = false");
@@ -107,10 +107,14 @@ string loadPath()
 	return fileNameStr;
 }
 
-string CUserInterface::getDeployType() {
-	if (m_currentDeploy == GL_BEGIN_GL_END) return "glbeg";
-	if (m_currentDeploy == DISPLAY_LIST) return "DL";
-	if (m_currentDeploy == VERTEX_POINTER) return "VP";
-	if (m_currentDeploy == VBO) return "VBO";
+int CUserInterface::getDeployType() {
+	if (m_currentDeploy == GL_BEGIN_GL_END) return 0;
+	if (m_currentDeploy == DISPLAY_LIST) return 1;
+	if (m_currentDeploy == VERTEX_POINTER) return 2;
+	if (m_currentDeploy == VBO) return 3;
 	return NULL;
+}
+
+void CUserInterface::setDeployType(int a) {
+
 }

@@ -87,19 +87,8 @@ bool OffLoader::load(string path)
 		file.close();
 		middlePoint();
 		normalize();
+		createList();
 		return true;
 	}
 }
 
-void OffLoader::display() {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
-	for (int i = 0; i < mNumOfFaces; i ++)
-	{
-		glBegin(GL_TRIANGLES);
-		glVertex3f(mVertices[(int) mFaces[i].x].x, mVertices[(int) mFaces[i].x].y, mVertices[(int) mFaces[i].x].z);
-		glVertex3f(mVertices[(int) mFaces[i].y].x, mVertices[(int) mFaces[i].y].y, mVertices[(int) mFaces[i].y].z);
-		glVertex3f(mVertices[(int) mFaces[i].z].x, mVertices[(int) mFaces[i].z].y, mVertices[(int) mFaces[i].z].z);
-		glEnd();
-	}
-}

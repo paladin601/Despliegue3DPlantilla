@@ -15,7 +15,7 @@ bool ObjLoader::load(string path)
 {
 	ifstream file;
 	string token, v, v1, v2;
-	float f[3], car;
+	float f[3];
 	int cont = 0;
 	file.open(path, std::ios::in);
 	mNumOfVertices = 0;
@@ -63,9 +63,9 @@ bool ObjLoader::load(string path)
 				file >> v;
 				file >> v1;
 				file >> v2;
-				f[0] = (float)atof(v.substr(0, v.find("/")).c_str());
-				f[1] = (float)atof(v1.substr(0, v1.find("/")).c_str());
-				f[2] = (float)atof(v2.substr(0, v2.find("/")).c_str());
+				f[0] = (float) (atof(v.substr(0, v.find("/")).c_str())-1);
+				f[1] = (float) (atof(v1.substr(0, v1.find("/")).c_str())-1);
+				f[2] = (float) (atof(v2.substr(0, v2.find("/")).c_str())-1);
 				mFaces.push_back(glm::vec3(f[0], f[1], f[2]));
 			}
 			else {
@@ -77,18 +77,8 @@ bool ObjLoader::load(string path)
 	file.close();
 	middlePoint();
 	normalize();
+	createList();
 	return true;
 }
 
-void ObjLoader::display() {
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	for (int i = 0; i < mNumOfFaces; i++)
-	{
-		glBegin(GL_TRIANGLES);
-		glVertex3f(mVertices[(int)mFaces[i].x-1].x, mVertices[(int)mFaces[i].x-1].y, mVertices[(int)mFaces[i].x-1].z);
-		glVertex3f(mVertices[(int)mFaces[i].y-1].x, mVertices[(int)mFaces[i].y-1].y, mVertices[(int)mFaces[i].y-1].z);
-		glVertex3f(mVertices[(int)mFaces[i].z-1].x, mVertices[(int)mFaces[i].z-1].y, mVertices[(int)mFaces[i].z-1].z);
-		glEnd();
-	}
-}
