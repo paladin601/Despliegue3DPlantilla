@@ -3,6 +3,8 @@
 CModel::CModel()
 {
 	mTranslation[0] = mTranslation[1] = mTranslation[2] = 0.0f;
+	mScale[0] = mScale[1] = mScale[2] = 1;
+	mRotation[0] = mRotation[1] = mRotation[2] = 0;
 	mDisplay = 1;
 }
 
@@ -56,6 +58,16 @@ void CModel::createList() {
 	glEndList();
 }
 
+void CModel::setRotation(glm::vec4 rotation)
+{
+	mRotation = rotation;
+}
+
+glm::vec4 CModel::getRotation()
+{
+	return mRotation;
+}
+
 void CModel::setTranslation(glm::vec3 translation)
 {
 	mTranslation = translation;
@@ -64,6 +76,16 @@ void CModel::setTranslation(glm::vec3 translation)
 glm::vec3 CModel::getTranslation()
 {
 	return mTranslation;
+}
+
+void CModel::setScale(glm::vec3 scale)
+{
+	mScale = scale;
+}
+
+glm::vec3 CModel::getScale()
+{
+	return mScale;
 }
 
 void CModel::normalize() {

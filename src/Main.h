@@ -1,10 +1,14 @@
 #define GLFW_INCLUDE_GLU
 #include "../headers/glfw3.h"
-#include <vector>
+#include "../headers/glm/glm.hpp"
 #include <iostream>
+#include <vector>
+#include <string>
 using namespace std;
 
 void updateUserInterface();
+
+void ConvertQuaternionToMatrix(glm::vec4, float*);
 
 void display();
 

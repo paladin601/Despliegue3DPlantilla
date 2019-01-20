@@ -26,7 +26,7 @@ bool ObjLoader::load(string path)
 			mNumOfVertices++;
 			for (int xx = 0; xx < 3; xx++) {
 				file >> v;
-				f[xx] = (float)atof(v.c_str());
+				f[xx] = (float) atof(v.c_str());
 				switch (xx)
 				{
 				case 0:

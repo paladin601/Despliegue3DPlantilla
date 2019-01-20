@@ -17,6 +17,8 @@ private:
 	static CUserInterface * mInterface; //Holds the instance of the class
 	TwBar *mUserInterface;
 	glm::vec3 mModelTranslation;
+	glm::vec3 mModelScale;
+	glm::vec4 mModelRotation;
 	string mDeployMode;
 	DEPLOY_TYPE m_currentDeploy;
 
@@ -28,7 +30,11 @@ public:
 	void show();
 	void hide();
 	void setModelTranslation(float *modelTranslation);
-	glm::vec3 getModelTranslation();
+	glm::vec3 getModelTranslation();	
+	void setModelScale(float *modelScale);
+	glm::vec3 getModelScale();
+	void setModelRotation(float *modelRotation);
+	glm::vec4 getModelRotation();
 	int getDeployType();
 	void setDeployType(int);
 

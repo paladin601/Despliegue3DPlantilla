@@ -21,8 +21,9 @@ class CModel
 		vector < glm::vec2 > out_uvs;
 		vector < glm::vec3 > out_normals;
 		vector < glm::vec3 > mVerticesBoundingBox;
+		glm::vec4 mRotation;
+		glm::vec3 mScale;
 		glm::vec3 mTranslation;
-		glm::vec3 mRotation;
 		GLuint list;
 		int mNumOfVertices, mNumOfFaces, mDisplay;
 
@@ -34,7 +35,11 @@ class CModel
 		void displayBeginEnd();
 		void displayList();
 		void createList();
-		void setTranslation(glm::vec3 translation);
+		void setRotation(glm::vec4);
+		glm::vec4 getRotation();
+		void setScale(glm::vec3);
+		glm::vec3 getScale();
+		void setTranslation(glm::vec3);
 		glm::vec3 getTranslation();
 		void normalize();
 		void middlePoint();

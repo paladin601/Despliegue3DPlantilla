@@ -34,19 +34,27 @@ CUserInterface::CUserInterface()
 	TwDefine("Model position = '20 20'");
 	TwDefine("Model size = '220 320'");
 
-	mModelTranslation[0] = 0.0f;
-	mModelTranslation[1] = 0.0f;
-	mModelTranslation[2] = 0.0f;
-
+	mModelTranslation[0] = mModelTranslation[1] = 	mModelTranslation[2] = 0.0f;
+	mModelScale[0] = mModelScale[1] = mModelScale[2] = 1;
+	mModelRotation[0] = mModelRotation[1] = mModelRotation[2] = 0;
+	mModelRotation[3] = 1;
 
 	TwEnumVal DeployType[] = { { GL_BEGIN_GL_END, "Gl Begin / Gl End" },{ DISPLAY_LIST, "Display List" },{ VERTEX_POINTER, "Vertex Pointer" },{ VBO, "VBO" } };
 	TwType DeployTwType = TwDefineEnum("DeployType", DeployType, 4);
-
 	TwAddVarRW(mUserInterface, "Deploy", DeployTwType, &m_currentDeploy, NULL);
+
 	TwAddSeparator(mUserInterface, "", NULL);
-	TwAddVarRW(mUserInterface, "X", TW_TYPE_FLOAT, &mModelTranslation[0], " group='Translation' step=0.01 ");
-	TwAddVarRW(mUserInterface, "Y", TW_TYPE_FLOAT, &mModelTranslation[1], " group='Translation' step=0.01 ");
-	TwAddVarRW(mUserInterface, "Z", TW_TYPE_FLOAT, &mModelTranslation[2], " group='Translation' step=0.01 ");
+	TwAddVarRW(mUserInterface, "TX", TW_TYPE_FLOAT, &mModelTranslation[0], " group='Translation' step=0.01 ");
+	TwAddVarRW(mUserInterface, "TY", TW_TYPE_FLOAT, &mModelTranslation[1], " group='Translation' step=0.01 ");
+	TwAddVarRW(mUserInterface, "TZ", TW_TYPE_FLOAT, &mModelTranslation[2], " group='Translation' step=0.01 ");
+	TwAddSeparator(mUserInterface, "", NULL);
+	TwAddVarRW(mUserInterface, "SX", TW_TYPE_FLOAT, &mModelScale[0], " group='Scale' step=0.1 ");
+	TwAddVarRW(mUserInterface, "SY", TW_TYPE_FLOAT, &mModelScale[1], " group='Scale' step=0.1 ");
+	TwAddVarRW(mUserInterface, "SZ", TW_TYPE_FLOAT, &mModelScale[2], " group='Scale' step=0.1 ");	
+	TwAddSeparator(mUserInterface, "", NULL);
+	TwAddVarRW(mUserInterface, "RX", TW_TYPE_FLOAT, &mModelRotation[0], " group='Rotation' step=1 min=-360 max=360");
+	TwAddVarRW(mUserInterface, "RY", TW_TYPE_FLOAT, &mModelRotation[1], " group='Rotation' step=1 min=-360 max=360");
+	TwAddVarRW(mUserInterface, "RZ", TW_TYPE_FLOAT, &mModelRotation[2], " group='Rotation' step=1 min=-360 max=360");
 	TwAddSeparator(mUserInterface, "", NULL);
 	TwAddButton(mUserInterface, "Load", CallbackLoad, NULL, NULL);
 }
@@ -87,6 +95,31 @@ void CUserInterface::setModelTranslation(float *modelTranslation)
 glm::vec3 CUserInterface::getModelTranslation()
 {
 	return mModelTranslation;
+}
+
+void CUserInterface::setModelScale(float * modelScale)
+{
+	mModelScale[0] = modelScale[0];
+	mModelScale[1] = modelScale[1];
+	mModelScale[2] = modelScale[2];
+}
+
+glm::vec3 CUserInterface::getModelScale()
+{
+	return mModelScale;
+}
+
+void CUserInterface::setModelRotation(float * modelRotation)
+{
+	mModelRotation[0] = modelRotation[0];
+	mModelRotation[1] = modelRotation[1];
+	mModelRotation[2] = modelRotation[2];
+	mModelRotation[3] = modelRotation[3];
+}
+
+glm::vec4 CUserInterface::getModelRotation()
+{
+	return mModelRotation;
 }
 
 string loadPath()
