@@ -2,6 +2,11 @@
 
 CModel::CModel()
 {
+	boundingBoxCheck = false;
+	mColor[0] = mColor[1] = mColor[2] = 1.0f;
+	max = glm::vec3(-1000, -1000, -1000);
+	min = glm::vec3(1000, 1000, 1000);
+	middle = glm::vec3(0, 0, 0);
 	mTranslation[0] = mTranslation[1] = mTranslation[2] = 0.0f;
 	mScale[0] = mScale[1] = mScale[2] = 1;
 	mRotation[0] = mRotation[1] = mRotation[2] = 0;
@@ -16,6 +21,7 @@ CModel::~CModel()
 void CModel::display()
 {
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glColor3fv(mColor);
 	switch (mDisplay)
 	{
 	case 0:
@@ -38,10 +44,16 @@ void CModel::displayBeginEnd() {
 		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
 		glEnd();
 	}
+	if (boundingBoxCheck) {
+		boundingBox->displayList();
+	}
 }
 
 void CModel::displayList() {
 	glCallList(list);
+	if (boundingBoxCheck) {
+		boundingBox->displayList();
+	}
 }
 
 void CModel::createList() {
@@ -90,11 +102,19 @@ glm::vec3 CModel::getScale()
 
 void CModel::normalize() {
 	float m = coordMax();
+
 	for (int i = 0; i < mNumOfVertices; i++) {
 		mVertices[i].x = (mVertices[i].x - middle.x) / m;
 		mVertices[i].y = (mVertices[i].y - middle.y) / m;
 		mVertices[i].z = (mVertices[i].z - middle.z) / m;
 	}
+	max.x = (max.x - middle.x) / m;
+	max.y = (max.y - middle.y) / m;
+	max.z = (max.z - middle.z) / m;
+	min.x = (min.x - middle.x) / m;
+	min.y = (min.y - middle.y) / m;
+	min.z = (min.z - middle.z) / m;
+
 }
 
 void CModel::middlePoint() {
@@ -122,4 +142,36 @@ int CModel::getDeployType()
 void CModel::setDeployType(int a)
 {
 	mDisplay = a;
+}
+
+void CModel::setBoundingBoxCheck(bool a)
+{
+	boundingBoxCheck = a;
+}
+
+bool CModel::getBoundingBoxCheck()
+{
+	return boundingBoxCheck;
+}
+
+void CModel::setColorBoundingBox(float *color)
+{
+	boundingBox->setColor(color);
+}
+
+float * CModel::getColorBoundingBox()
+{
+	return boundingBox->getColor();
+}
+
+void CModel::setColor(float *color)
+{
+	mColor[0] = color[0];
+	mColor[1] = color[1];
+	mColor[2] = color[2];
+}
+
+float * CModel::getColor()
+{
+	return mColor;
 }

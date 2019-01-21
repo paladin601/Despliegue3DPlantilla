@@ -4,9 +4,7 @@
 
 OffLoader::OffLoader()
 {
-	max = glm::vec3(0, 0, 0);
-	min = glm::vec3(500, 500, 500);
-	middle = glm::vec3(0, 0, 0);
+
 }
 
 
@@ -41,26 +39,27 @@ bool OffLoader::load(string path)
 		{
 			file >> v1;
 			f1 = (float)atof(v1.c_str());
+			file >> v2;
+			f2 = (float)atof(v2.c_str());
+			file >> v3;
+			f3 = (float)atof(v3.c_str());
 			if (f1 > max.x) {
 				max.x = f1;
 			}
-			if (f1 < max.x) {
-				min.x = f1;
-			}
-			file >> v2;
-			f2 = (float)atof(v2.c_str());
 			if (f2 > max.y) {
 				max.y = f2;
 			}
-			if (f2 < max.y) {
-				min.y = f2;
-			}
-			file >> v3;
-			f3 = (float)atof(v3.c_str());
 			if (f3 > max.z) {
 				max.z = f3;
 			}
-			if (f3 < max.z) {
+
+			if (f1 < min.x) {
+				min.x = f1;
+			}
+			if (f2 < min.y) {
+				min.y = f2;
+			}
+			if (f3 < min.z) {
 				min.z = f3;
 			}
 			mVertices.push_back(glm::vec3(f1, f2, f3));
@@ -88,6 +87,7 @@ bool OffLoader::load(string path)
 		middlePoint();
 		normalize();
 		createList();
+		boundingBox = new BoundingBox(min, max);
 		return true;
 	}
 }

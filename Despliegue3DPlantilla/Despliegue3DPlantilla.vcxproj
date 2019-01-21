@@ -116,6 +116,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\BoundingBox.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Model.cpp" />
     <ClCompile Include="..\src\ObjLoader.cpp" />
@@ -124,6 +125,7 @@
     <ClCompile Include="..\src\UserInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\BoundingBox.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Model.h" />
     <ClInclude Include="..\src\ObjLoader.h" />

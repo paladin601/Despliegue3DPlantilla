@@ -2,6 +2,7 @@
 
 #include "../headers/glfw3.h"
 #include "../headers/glm/glm.hpp"
+#include "BoundingBox.h"
 #include <iostream>
 #include <vector>
 #include <string>
@@ -21,11 +22,14 @@ class CModel
 		vector < glm::vec2 > out_uvs;
 		vector < glm::vec3 > out_normals;
 		vector < glm::vec3 > mVerticesBoundingBox;
+		BoundingBox *boundingBox;
 		glm::vec4 mRotation;
 		glm::vec3 mScale;
 		glm::vec3 mTranslation;
 		GLuint list;
+		float mColor[3];
 		int mNumOfVertices, mNumOfFaces, mDisplay;
+		bool boundingBoxCheck;
 
 	public:
 		CModel();
@@ -46,4 +50,10 @@ class CModel
 		float coordMax();
 		int getDeployType();
 		void setDeployType(int);
+		void setBoundingBoxCheck(bool);
+		bool getBoundingBoxCheck();
+		void setColorBoundingBox(float *);
+		float* getColorBoundingBox();
+		void setColor(float *);
+		float* getColor();
 };

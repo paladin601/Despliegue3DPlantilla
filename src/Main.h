@@ -8,7 +8,7 @@ using namespace std;
 
 void updateUserInterface();
 
-void ConvertQuaternionToMatrix(glm::vec4, float*);
+void getMatriz4x4(glm::vec4, float*);
 
 void display();
 

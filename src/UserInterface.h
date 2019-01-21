@@ -21,6 +21,8 @@ private:
 	glm::vec4 mModelRotation;
 	string mDeployMode;
 	DEPLOY_TYPE m_currentDeploy;
+	float mModelColor[3], mBoundingBoxColor[3];
+	bool boundingBoxCheck;
 
 public:
 	///Method to obtain the only instance of the calls
@@ -30,14 +32,19 @@ public:
 	void show();
 	void hide();
 	void setModelTranslation(float *modelTranslation);
-	glm::vec3 getModelTranslation();	
+	glm::vec3 getModelTranslation();
 	void setModelScale(float *modelScale);
 	glm::vec3 getModelScale();
 	void setModelRotation(float *modelRotation);
 	glm::vec4 getModelRotation();
 	int getDeployType();
 	void setDeployType(int);
-
+	void setColor(float, float, float);
+	float* getColor();
+	void setColorBoundingBox(float, float, float);
+	float* getColorBoundingBox();
+	void setBoundingBoxCheck(bool);
+	bool getBoundingBoxCheck();
 
 private:
 	///Private constructor

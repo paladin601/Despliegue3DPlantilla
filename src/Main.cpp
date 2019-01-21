@@ -19,9 +19,13 @@ void updateUserInterface()
 {
 	if (picked > -1)
 		models[picked]->setTranslation(userInterface->getModelTranslation());
-		models[picked]->setScale(userInterface->getModelScale());
-		models[picked]->setRotation(userInterface->getModelRotation());
-		models[picked]->setDeployType(userInterface->getDeployType());
+	models[picked]->setScale(userInterface->getModelScale());
+	models[picked]->setRotation(userInterface->getModelRotation());
+	models[picked]->setColor(userInterface->getColor());
+	models[picked]->setColorBoundingBox(userInterface->getColorBoundingBox());
+	models[picked]->setBoundingBoxCheck(userInterface->getBoundingBoxCheck());
+
+	models[picked]->setDeployType(userInterface->getDeployType());
 
 }
 
@@ -36,12 +40,17 @@ void display()
 		glm::vec3 translation = models[i]->getTranslation();
 		glm::vec3 scale = models[i]->getScale();
 		glm::vec4 rotation = models[i]->getRotation();
-		//GLfloat matriz[16];
+		GLfloat matriz[16] = {
+		1.0f,0.0f,0.0f,0.0f,
+		0.0f,1.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+		};
 		glPushMatrix();
 		glScalef(scale.x, scale.y, scale.z);
 		glTranslatef(translation.x, translation.y, translation.z);
-		//ConvertQuaternionToMatrix(rotation, matriz);
-		//glMultMatrixf(matriz);
+		getMatriz4x4(rotation, matriz);
+		glMultMatrixf(matriz);
 
 		models[i]->display();
 		glPopMatrix();
@@ -49,7 +58,7 @@ void display()
 
 }
 
-void ConvertQuaternionToMatrix(glm::vec4 quat, float *mat)
+void getMatriz4x4(glm::vec4 quat, float *mat)
 {
 	float yy2 = 2.0f * quat[1] * quat[1];
 	float xy2 = 2.0f * quat[0] * quat[1];
@@ -60,20 +69,19 @@ void ConvertQuaternionToMatrix(glm::vec4 quat, float *mat)
 	float wy2 = 2.0f * quat[3] * quat[1];
 	float wx2 = 2.0f * quat[3] * quat[0];
 	float xx2 = 2.0f * quat[0] * quat[0];
-	mat[0 * 4 + 0] = -yy2 - zz2 + 1.0f;
-	mat[0 * 4 + 1] = xy2 + wz2;
-	mat[0 * 4 + 2] = xz2 - wy2;
-	mat[0 * 4 + 3] = 0;
-	mat[1 * 4 + 0] = xy2 - wz2;
-	mat[1 * 4 + 1] = -xx2 - zz2 + 1.0f;
-	mat[1 * 4 + 2] = yz2 + wx2;
-	mat[1 * 4 + 3] = 0;
-	mat[2 * 4 + 0] = xz2 + wy2;
-	mat[2 * 4 + 1] = yz2 - wx2;
-	mat[2 * 4 + 2] = -xx2 - yy2 + 1.0f;
-	mat[2 * 4 + 3] = 0;
-	mat[3 * 4 + 0] = mat[3 * 4 + 1] = mat[3 * 4 + 2] = 0;
-	mat[3 * 4 + 3] = 1;
+
+	mat[0] = -yy2 - zz2 + 1.0f;
+	mat[1] = xy2 + wz2;
+	mat[2] = xz2 - wy2;
+	mat[4] = xy2 - wz2;
+	mat[5] = -xx2 - zz2 + 1.0f;
+	mat[6] = yz2 + wx2;
+	mat[8] = xz2 + wy2;
+	mat[9] = yz2 - wx2;
+	mat[10] = -xx2 - yy2 + 1.0f;
+
+	mat[3] = mat[7] = mat[11] = mat[12] = mat[13] = mat[14] = 0;
+	mat[15] = 1;
 }
 
 void reshape(GLFWwindow *window, int width, int height)
@@ -180,7 +188,7 @@ bool initScene()
 	ObjLoader* offLoader = new ObjLoader();
 
 	CSOff* soff = new CSOff();
-	if(!soff->load("../files/cube.soff"))
+	if (!soff->load("../files/cube.soff"))
 		return false;
 
 	if (!offLoader->load("../files/Batman.obj"))

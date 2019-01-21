@@ -1,7 +1,5 @@
 #include "ObjLoader.h"
 
-
-
 ObjLoader::ObjLoader()
 {
 }
@@ -78,6 +76,7 @@ bool ObjLoader::load(string path)
 	middlePoint();
 	normalize();
 	createList();
+	boundingBox = new BoundingBox(min, max);
 	return true;
 }
 
