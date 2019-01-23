@@ -119,6 +119,7 @@
     <ClCompile Include="..\src\BoundingBox.cpp" />
     <ClCompile Include="..\src\Main.cpp" />
     <ClCompile Include="..\src\Model.cpp" />
+    <ClCompile Include="..\src\Normal.cpp" />
     <ClCompile Include="..\src\ObjLoader.cpp" />
     <ClCompile Include="..\src\OffLoader.cpp" />
     <ClCompile Include="..\src\SOff.cpp" />
@@ -128,6 +129,7 @@
     <ClInclude Include="..\src\BoundingBox.h" />
     <ClInclude Include="..\src\Main.h" />
     <ClInclude Include="..\src\Model.h" />
+    <ClInclude Include="..\src\Normal.h" />
     <ClInclude Include="..\src\ObjLoader.h" />
     <ClInclude Include="..\src\OffLoader.h" />
     <ClInclude Include="..\src\SOff.h" />

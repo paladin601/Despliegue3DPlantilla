@@ -88,6 +88,7 @@ bool OffLoader::load(string path)
 		normalize();
 		createList();
 		boundingBox = new BoundingBox(min, max);
+		normals = new Normal(mVertices, mFaces, mNumOfVertices, mNumOfFaces);
 		return true;
 	}
 }

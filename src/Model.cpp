@@ -2,13 +2,15 @@
 
 CModel::CModel()
 {
-	boundingBoxCheck = false;
+	fillCheck = pointCheck = wireCheck = boundingBoxCheck = false;
 	mColor[0] = mColor[1] = mColor[2] = 1.0f;
+	mColorFill[0] = mColorFill[1] = mColorFill[2] = 1.0f;
+	mColorPoint[0] = mColorPoint[1] = mColorPoint[2] = 1.0f;
 	max = glm::vec3(-1000, -1000, -1000);
 	min = glm::vec3(1000, 1000, 1000);
 	middle = glm::vec3(0, 0, 0);
 	mTranslation[0] = mTranslation[1] = mTranslation[2] = 0.0f;
-	mScale[0] = mScale[1] = mScale[2] = 1;
+	mScale[0] = mScale[1] = mScale[2] = 3;
 	mRotation[0] = mRotation[1] = mRotation[2] = 0;
 	mDisplay = 1;
 }
@@ -20,8 +22,39 @@ CModel::~CModel()
 
 void CModel::display()
 {
+	if (fillCheck) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		glColor3fv(mColorFill);
+		selectDisplay();
+	}
+	glPolygonOffset(2, 2);
+	if (wireCheck) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		glColor3fv(mColor);
+		selectDisplay();
+	}
+	if (pointCheck) {
+		glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
+		glColor3fv(mColorPoint);
+		glPointSize(3.0f);
+		selectDisplay();
+		glPointSize(1.0f);
+	}
+	glPolygonOffset(0, 0);
+
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	glColor3fv(mColor);
+	if (boundingBoxCheck) {
+		boundingBox->displayList();
+	}
+	if (normalsFacesCheck) {
+		normals->displayNormalFaces();
+	}
+	if (normalsVerticesCheck) {
+		normals->displayNormalVertices();
+	}
+}
+void CModel::selectDisplay()
+{
 	switch (mDisplay)
 	{
 	case 0:
@@ -44,16 +77,10 @@ void CModel::displayBeginEnd() {
 		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
 		glEnd();
 	}
-	if (boundingBoxCheck) {
-		boundingBox->displayList();
-	}
 }
 
 void CModel::displayList() {
 	glCallList(list);
-	if (boundingBoxCheck) {
-		boundingBox->displayList();
-	}
 }
 
 void CModel::createList() {
@@ -111,6 +138,7 @@ void CModel::normalize() {
 	max.x = (max.x - middle.x) / m;
 	max.y = (max.y - middle.y) / m;
 	max.z = (max.z - middle.z) / m;
+
 	min.x = (min.x - middle.x) / m;
 	min.y = (min.y - middle.y) / m;
 	min.z = (min.z - middle.z) / m;
@@ -118,9 +146,9 @@ void CModel::normalize() {
 }
 
 void CModel::middlePoint() {
-	middle.x = (max.x - min.x) / 2;
-	middle.y = (max.y - min.y) / 2;
-	middle.z = (max.z - min.z) / 2;
+	middle.x = (max.x + min.x) / 2;
+	middle.y = (max.y + min.y) / 2;
+	middle.z = (max.z + min.z) / 2;
 }
 float CModel::coordMax() {
 	float m;
@@ -154,6 +182,36 @@ bool CModel::getBoundingBoxCheck()
 	return boundingBoxCheck;
 }
 
+void CModel::setFillCheck(bool a)
+{
+	fillCheck = a;
+}
+
+bool CModel::getFillCheck()
+{
+	return fillCheck;
+}
+
+void CModel::setWireCheck(bool a)
+{
+	wireCheck = a;
+}
+
+bool CModel::getWireCheck()
+{
+	return wireCheck;
+}
+
+void CModel::setPointCheck(bool a)
+{
+	pointCheck = a;
+}
+
+bool CModel::getPointCheck()
+{
+	return pointCheck;
+}
+
 void CModel::setColorBoundingBox(float *color)
 {
 	boundingBox->setColor(color);
@@ -162,6 +220,26 @@ void CModel::setColorBoundingBox(float *color)
 float * CModel::getColorBoundingBox()
 {
 	return boundingBox->getColor();
+}
+
+void CModel::setNormalsFacesCheck(bool a)
+{
+	normalsFacesCheck = a;
+}
+
+bool CModel::getNormalsFacesCheck()
+{
+	return normalsFacesCheck;
+}
+
+void CModel::setNormalsVerticesCheck(bool a)
+{
+	normalsVerticesCheck = a;
+}
+
+bool CModel::getNormalsVerticesCheck()
+{
+	return normalsVerticesCheck;
 }
 
 void CModel::setColor(float *color)
@@ -174,4 +252,48 @@ void CModel::setColor(float *color)
 float * CModel::getColor()
 {
 	return mColor;
+}
+
+void CModel::setColorFill(float *color)
+{
+	mColorFill[0] = color[0];
+	mColorFill[1] = color[1];
+	mColorFill[2] = color[2];
+}
+
+float * CModel::getColorFill()
+{
+	return mColorFill;
+}
+
+void CModel::setColorPoint(float *color)
+{
+	mColorPoint[0] = color[0];
+	mColorPoint[1] = color[1];
+	mColorPoint[2] = color[2];
+}
+
+float * CModel::getColorPoint()
+{
+	return mColorPoint;
+}
+
+void CModel::setColorNormalsVertices(float *color)
+{
+	normals->setColor(color);
+}
+
+float * CModel::getColorNormalsVertices()
+{
+	return normals->getColor();
+}
+
+void CModel::setColorNormalsFaces(float *color)
+{
+	normals->setColorFaces(color);
+}
+
+float * CModel::getColorNormalsFaces()
+{
+	return normals->getColorFaces();
 }

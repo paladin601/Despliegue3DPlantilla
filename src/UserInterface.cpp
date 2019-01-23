@@ -25,6 +25,7 @@ CUserInterface * CUserInterface::Instance()
 
 CUserInterface::CUserInterface()
 {
+	pick = 0;
 	mUserInterface = TwNewBar("Model");
 	m_currentDeploy = DISPLAY_LIST;
 	TwDefine("Model refresh = '0.0001f'");
@@ -32,16 +33,22 @@ CUserInterface::CUserInterface()
 	TwDefine("Model fontresizable = false");
 	TwDefine("Model movable = false");
 	TwDefine("Model position = '20 20'");
-	TwDefine("Model size = '250 320'");
-
+	TwDefine("Model size = '300 700'");
+	mFillColor[0] = mFillColor[1] = mFillColor[2] = 1.0f;
+	mPointColor[0] = mPointColor[1] = mPointColor[2] = 1.0f;
 	mModelColor[0] = mModelColor[1] = mModelColor[2] = 1.0f;
+	mNormalsFacesColor[0] = mNormalsFacesColor[1] = mNormalsFacesColor[2] = 1.0f;
+	mNormalsVerticesColor[0] = mNormalsVerticesColor[1] = mNormalsVerticesColor[2] = 1.0f;
 	mBoundingBoxColor[0] = 1.0f;
 	mBoundingBoxColor[1] = mBoundingBoxColor[2] = 0.0f;
 	mModelTranslation[0] = mModelTranslation[1] = mModelTranslation[2] = 0.0f;
-	mModelScale[0] = mModelScale[1] = mModelScale[2] = 1;
+	mModelScale[0] = mModelScale[1] = mModelScale[2] = 3;
 	mModelRotation[0] = mModelRotation[1] = mModelRotation[2] = 0;
 	mModelRotation[3] = 1;
-	boundingBoxCheck = true;
+	zBuffer = fillCheck = boundingBoxCheck = true;
+	camera = backFace = false;
+	normalsFacesCheck = normalsVerticesCheck = pointCheck = wireCheck = false;
+
 
 	TwEnumVal DeployType[] = { { GL_BEGIN_GL_END, "Gl Begin / Gl End" },{ DISPLAY_LIST, "Display List" },{ VERTEX_POINTER, "Vertex Pointer" },{ VBO, "VBO" } };
 	TwType DeployTwType = TwDefineEnum("DeployType", DeployType, 4);
@@ -51,9 +58,30 @@ CUserInterface::CUserInterface()
 	TwAddButton(mUserInterface, "Load", CallbackLoad, NULL, NULL);
 
 	TwAddSeparator(mUserInterface, "", NULL);
-	TwAddVarRW(mUserInterface, "Bounding Box D.", TW_TYPE_BOOLCPP, &boundingBoxCheck, "key=b");
+	TwAddVarRW(mUserInterface, "Figure", TW_TYPE_INT32, &pick, "group='Pick' min='0'");
 	TwAddSeparator(mUserInterface, "", NULL);
 
+	TwAddVarRW(mUserInterface, "Orthographic Camera", TW_TYPE_BOOLCPP, &camera, "group='Disabled - Enabled'");
+	TwAddVarRW(mUserInterface, "BackFace", TW_TYPE_BOOLCPP, &backFace, "group='Disabled - Enabled'");
+	TwAddVarRW(mUserInterface, "ZBuffer", TW_TYPE_BOOLCPP, &zBuffer, "group='Disabled - Enabled'");
+
+
+	TwAddVarRW(mUserInterface, "Display Faces", TW_TYPE_BOOLCPP, &normalsFacesCheck, "group='Normals'");
+	TwAddVarRW(mUserInterface, "Color Faces", TW_TYPE_COLOR3F, &mNormalsFacesColor, " group='Normals'");
+	TwAddVarRW(mUserInterface, "Display Vertices", TW_TYPE_BOOLCPP, &normalsVerticesCheck, "group='Normals'");
+	TwAddVarRW(mUserInterface, "Color Vertices", TW_TYPE_COLOR3F, &mNormalsVerticesColor, " group='Normals'");
+
+	TwAddVarRW(mUserInterface, "Display", TW_TYPE_BOOLCPP, &boundingBoxCheck, "group='Bounding Box'");
+	TwAddVarRW(mUserInterface, "Color", TW_TYPE_COLOR3F, &mBoundingBoxColor, " group='Bounding Box'");
+
+	TwAddVarRW(mUserInterface, "Wire-frame Display", TW_TYPE_BOOLCPP, &wireCheck, "group='Wire-frame'");
+	TwAddVarRW(mUserInterface, "Wire-frame Color", TW_TYPE_COLOR3F, &mModelColor, " group='Wire-frame'");
+
+	TwAddVarRW(mUserInterface, "Points Display", TW_TYPE_BOOLCPP, &pointCheck, "group='Points'");
+	TwAddVarRW(mUserInterface, "Points Color", TW_TYPE_COLOR3F, &mPointColor, " group='Points'");
+
+	TwAddVarRW(mUserInterface, "Fill Display", TW_TYPE_BOOLCPP, &fillCheck, "group='Fill'");
+	TwAddVarRW(mUserInterface, "Fill Color", TW_TYPE_COLOR3F, &mFillColor, " group='Fill'");
 
 	TwAddVarRW(mUserInterface, "TX", TW_TYPE_FLOAT, &mModelTranslation[0], " group='Translation' step=0.01 min=-500.0 max=500.0");
 	TwAddVarRW(mUserInterface, "TY", TW_TYPE_FLOAT, &mModelTranslation[1], " group='Translation' step=0.01 min=-500.0 max=500.0");
@@ -69,8 +97,6 @@ CUserInterface::CUserInterface()
 	TwAddVarRO(mUserInterface, "RZ", TW_TYPE_FLOAT, &mModelRotation[2], " group='Rotation'");
 	TwAddVarRO(mUserInterface, "RW", TW_TYPE_FLOAT, &mModelRotation[3], " group='Rotation'");
 
-	TwAddVarRW(mUserInterface, "Model", TW_TYPE_COLOR3F, &mModelColor, " group='Color'");
-	TwAddVarRW(mUserInterface, "Bounding Box", TW_TYPE_COLOR3F, &mBoundingBoxColor, " group='Color'");
 
 }
 
@@ -100,39 +126,35 @@ void CUserInterface::hide()
 	TwDefine("Figure visible = false");
 }
 
-void CUserInterface::setModelTranslation(float *modelTranslation)
+void CUserInterface::setTranslation(glm::vec3 modelTranslation)
 {
-	mModelTranslation[0] = modelTranslation[0];
-	mModelTranslation[1] = modelTranslation[1];
-	mModelTranslation[2] = modelTranslation[2];
+	mModelTranslation = modelTranslation;
+
 }
 
-glm::vec3 CUserInterface::getModelTranslation()
+glm::vec3 CUserInterface::getTranslation()
 {
 	return mModelTranslation;
 }
 
-void CUserInterface::setModelScale(float * modelScale)
+void CUserInterface::setScale(glm::vec3  modelScale)
 {
-	mModelScale[0] = modelScale[0];
-	mModelScale[1] = modelScale[1];
-	mModelScale[2] = modelScale[2];
+	mModelScale = modelScale;
+
 }
 
-glm::vec3 CUserInterface::getModelScale()
+glm::vec3 CUserInterface::getScale()
 {
 	return mModelScale;
 }
 
-void CUserInterface::setModelRotation(float * modelRotation)
+void CUserInterface::setRotation(glm::vec4 modelRotation)
 {
-	mModelRotation[0] = modelRotation[0];
-	mModelRotation[1] = modelRotation[1];
-	mModelRotation[2] = modelRotation[2];
-	mModelRotation[3] = modelRotation[3];
+	mModelRotation = modelRotation;
+
 }
 
-glm::vec4 CUserInterface::getModelRotation()
+glm::vec4 CUserInterface::getRotation()
 {
 	return mModelRotation;
 }
@@ -184,11 +206,42 @@ void CUserInterface::setDeployType(int a) {
 	}
 }
 
-void CUserInterface::setColor(float r, float g, float b)
+int CUserInterface::getPicked()
 {
-	mModelColor[0] = r;
-	mModelColor[1] = g;
-	mModelColor[2] = b;
+	return pick;
+}
+
+void CUserInterface::setColorFill(float *color)
+{
+	mFillColor[0] = color[0];
+	mFillColor[1] = color[1];
+	mFillColor[2] = color[2];
+}
+
+float * CUserInterface::getColorFill()
+{
+	return mFillColor;
+}
+
+
+void CUserInterface::setColorPoint(float *color)
+{
+	mPointColor[0] = color[0];
+	mPointColor[1] = color[1];
+	mPointColor[2] = color[2];
+}
+
+float * CUserInterface::getColorPoint()
+{
+	return mPointColor;
+}
+
+
+void CUserInterface::setColor(float *color)
+{
+	mModelColor[0] = color[0];
+	mModelColor[1] = color[1];
+	mModelColor[2] = color[2];
 }
 
 float * CUserInterface::getColor()
@@ -196,16 +249,41 @@ float * CUserInterface::getColor()
 	return mModelColor;
 }
 
-void CUserInterface::setColorBoundingBox(float r, float g, float b)
+
+void CUserInterface::setColorBoundingBox(float* color)
 {
-	mBoundingBoxColor[0] = r;
-	mBoundingBoxColor[1] = g;
-	mBoundingBoxColor[2] = b;
+	mBoundingBoxColor[0] = color[0];
+	mBoundingBoxColor[1] = color[1];
+	mBoundingBoxColor[2] = color[2];
 }
 
 float * CUserInterface::getColorBoundingBox()
 {
 	return mBoundingBoxColor;
+}
+
+void CUserInterface::setColorNormalsFaces(float *color)
+{
+	mNormalsFacesColor[0] = color[0];
+	mNormalsFacesColor[1] = color[1];
+	mNormalsFacesColor[2] = color[2];
+}
+
+float * CUserInterface::getColorNormalsFaces()
+{
+	return mNormalsFacesColor;
+}
+
+void CUserInterface::setColorNormalsVertices(float *color)
+{
+	mNormalsVerticesColor[0] = color[0];
+	mNormalsVerticesColor[1] = color[1];
+	mNormalsVerticesColor[2] = color[2];
+}
+
+float * CUserInterface::getColorNormalsVertices()
+{
+	return mNormalsVerticesColor;
 }
 
 void CUserInterface::setBoundingBoxCheck(bool a)
@@ -216,4 +294,69 @@ void CUserInterface::setBoundingBoxCheck(bool a)
 bool CUserInterface::getBoundingBoxCheck()
 {
 	return boundingBoxCheck;
+}
+
+bool CUserInterface::getFillCheck()
+{
+	return fillCheck;
+}
+
+void CUserInterface::setFillCheck(bool a)
+{
+	fillCheck = a;
+}
+
+void CUserInterface::setPointCheck(bool a)
+{
+	pointCheck = a;
+}
+
+bool CUserInterface::getPointCheck()
+{
+	return pointCheck;
+}
+
+void CUserInterface::setWireCheck(bool a)
+{
+	wireCheck = a;
+}
+
+bool CUserInterface::getWireCheck()
+{
+	return wireCheck;
+}
+
+void CUserInterface::setNormalsFacesCheck(bool a)
+{
+	normalsFacesCheck = a;
+}
+
+bool CUserInterface::getNormalsFacesCheck()
+{
+	return normalsFacesCheck;
+}
+
+void CUserInterface::setNormalsVerticesCheck(bool a)
+{
+	normalsVerticesCheck = a;
+}
+
+bool CUserInterface::getNormalsVerticesCheck()
+{
+	return normalsVerticesCheck;
+}
+
+bool CUserInterface::getBackFaceCheck()
+{
+	return backFace;
+}
+
+bool CUserInterface::getZBufferCheck()
+{
+	return zBuffer;
+}
+
+bool CUserInterface::getCameraCheck()
+{
+	return camera;
 }

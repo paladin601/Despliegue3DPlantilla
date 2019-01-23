@@ -21,8 +21,10 @@ private:
 	glm::vec4 mModelRotation;
 	string mDeployMode;
 	DEPLOY_TYPE m_currentDeploy;
-	float mModelColor[3], mBoundingBoxColor[3];
-	bool boundingBoxCheck;
+	int pick;
+	float mModelColor[3], mBoundingBoxColor[3], mPointColor[3], mFillColor[3], mNormalsFacesColor[3], mNormalsVerticesColor[3];
+	bool boundingBoxCheck, fillCheck, pointCheck, wireCheck, normalsFacesCheck, normalsVerticesCheck;
+	bool backFace, zBuffer, camera;
 
 public:
 	///Method to obtain the only instance of the calls
@@ -31,22 +33,48 @@ public:
 	void reshape();
 	void show();
 	void hide();
-	void setModelTranslation(float *modelTranslation);
-	glm::vec3 getModelTranslation();
-	void setModelScale(float *modelScale);
-	glm::vec3 getModelScale();
-	void setModelRotation(float *modelRotation);
-	glm::vec4 getModelRotation();
+	void setTranslation(glm::vec3 modelTranslation);
+	glm::vec3 getTranslation();
+	void setScale(glm::vec3 modelScale);
+	glm::vec3 getScale();
+	void setRotation(glm::vec4 modelRotation);
+	glm::vec4 getRotation();
 	int getDeployType();
 	void setDeployType(int);
-	void setColor(float, float, float);
+
+	int getPicked();
+
+	void setColor(float*);
 	float* getColor();
-	void setColorBoundingBox(float, float, float);
-	float* getColorBoundingBox();
+	void setColorFill(float*);
+	float* getColorFill();
+	void setColorPoint(float*);
+	float* getColorPoint();
+	void setColorBoundingBox(float*);
+	float* getColorBoundingBox();	
+	void setColorNormalsFaces(float*);
+	float* getColorNormalsFaces();
+	void setColorNormalsVertices(float*);
+	float* getColorNormalsVertices();
+
 	void setBoundingBoxCheck(bool);
 	bool getBoundingBoxCheck();
+	bool getFillCheck();
+	void setFillCheck(bool);
+	void setPointCheck(bool);
+	bool getPointCheck();
+	void setWireCheck(bool);
+	bool getWireCheck();
+	void setNormalsFacesCheck(bool);
+	bool getNormalsFacesCheck();
+	void setNormalsVerticesCheck(bool);
+	bool getNormalsVerticesCheck();
+
+	bool getBackFaceCheck();
+	bool getZBufferCheck();
+	bool getCameraCheck();
 
 private:
 	///Private constructor
-	CUserInterface(); 
+	CUserInterface();
 };

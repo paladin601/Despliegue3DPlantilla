@@ -14,19 +14,99 @@ int gWidth, gHeight;
 CUserInterface * userInterface;
 vector <CModel *> models;
 int picked;
+bool backFace = false;
+bool camera = false;
+bool ZBuffer = true;
 
 void updateUserInterface()
 {
-	if (picked > -1)
-		models[picked]->setTranslation(userInterface->getModelTranslation());
-	models[picked]->setScale(userInterface->getModelScale());
-	models[picked]->setRotation(userInterface->getModelRotation());
-	models[picked]->setColor(userInterface->getColor());
-	models[picked]->setColorBoundingBox(userInterface->getColorBoundingBox());
-	models[picked]->setBoundingBoxCheck(userInterface->getBoundingBoxCheck());
+	int a = userInterface->getPicked();
+	bool abackFace = userInterface->getBackFaceCheck();
+	bool aZBuffer = userInterface->getZBufferCheck();
+	bool acamera = userInterface->getCameraCheck();
+	if (abackFace != backFace || acamera != camera || aZBuffer != ZBuffer) {
+		backFace = abackFace;
+		camera = acamera;
+		ZBuffer =aZBuffer;
+		change_view();
+	}
 
-	models[picked]->setDeployType(userInterface->getDeployType());
+	if (a==picked) {
+		models[picked]->setTranslation(userInterface->getTranslation());
+		models[picked]->setScale(userInterface->getScale());
+		models[picked]->setRotation(userInterface->getRotation());
 
+		models[picked]->setWireCheck(userInterface->getWireCheck());
+		models[picked]->setPointCheck(userInterface->getPointCheck());
+		models[picked]->setFillCheck(userInterface->getFillCheck());
+		models[picked]->setBoundingBoxCheck(userInterface->getBoundingBoxCheck());
+
+		models[picked]->setColor(userInterface->getColor());
+		models[picked]->setColorFill(userInterface->getColorFill());
+		models[picked]->setColorPoint(userInterface->getColorPoint());
+		models[picked]->setColorBoundingBox(userInterface->getColorBoundingBox());
+
+		models[picked]->setNormalsFacesCheck(userInterface->getNormalsFacesCheck());
+		models[picked]->setColorNormalsFaces(userInterface->getColorNormalsFaces());
+		models[picked]->setNormalsVerticesCheck(userInterface->getNormalsVerticesCheck());
+		models[picked]->setColorNormalsVertices(userInterface->getColorNormalsVertices());
+
+
+		models[picked]->setDeployType(userInterface->getDeployType());
+
+	}
+	else {
+		models[picked]->setBoundingBoxCheck(false);
+		picked = a;
+		userInterface->setTranslation(models[picked]->getTranslation());
+		userInterface->setScale(models[picked]->getScale());
+		userInterface->setRotation(models[picked]->getRotation());
+		userInterface->setWireCheck(models[picked]->getWireCheck());
+		userInterface->setPointCheck(models[picked]->getPointCheck());
+		userInterface->setFillCheck(models[picked]->getFillCheck());
+		userInterface->setBoundingBoxCheck(models[picked]->getBoundingBoxCheck());
+		userInterface->setColor(models[picked]->getColor());
+		userInterface->setColorFill(models[picked]->getColorFill());
+		userInterface->setColorPoint(models[picked]->getColorPoint());
+		userInterface->setColorBoundingBox(models[picked]->getColorBoundingBox());
+		userInterface->setNormalsFacesCheck(models[picked]->getNormalsFacesCheck());
+		userInterface->setColorNormalsFaces(models[picked]->getColorNormalsFaces());
+		userInterface->setNormalsVerticesCheck(models[picked]->getNormalsVerticesCheck());
+		userInterface->setColorNormalsVertices(models[picked]->getColorNormalsVertices());
+		userInterface->setDeployType(models[picked]->getDeployType());
+	}
+
+}
+
+void change_view() {
+	if (camera) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-(float)gWidth / 100.0f, (float)gWidth / 100.0f, -(float)gHeight / 100.0f, (float)gHeight / 100.0f, 0.01f, 100.0f);
+
+		glMatrixMode(GL_MODELVIEW);
+	}
+	else {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45.0f, (float)gWidth / (float)gHeight, 1.0f, 1000.0f);
+
+		glMatrixMode(GL_MODELVIEW);
+	}
+
+	if (backFace) {
+		glEnable(GL_CULL_FACE);
+	}
+	else {
+		glDisable(GL_CULL_FACE);
+	}
+
+	if (ZBuffer) {
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
 }
 
 void display()
@@ -48,9 +128,9 @@ void display()
 		};
 		glPushMatrix();
 		glScalef(scale.x, scale.y, scale.z);
-		glTranslatef(translation.x, translation.y, translation.z);
 		getMatriz4x4(rotation, matriz);
 		glMultMatrixf(matriz);
+		glTranslatef(translation.x, translation.y, translation.z);
 
 		models[i]->display();
 		glPopMatrix();
@@ -93,11 +173,34 @@ void reshape(GLFWwindow *window, int width, int height)
 
 	userInterface->reshape();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective(45.0f, (float)gWidth / (float)gHeight, 1.0f, 1000.0f);
+	if (camera) {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(-(float)gWidth / 100.0f, (float)gWidth / 100.0f, -(float)gHeight / 100.0f, (float)gHeight / 100.0f, 0.01f, 100.0f);
 
-	glMatrixMode(GL_MODELVIEW);
+		glMatrixMode(GL_MODELVIEW);
+	}
+	else {
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluPerspective(45.0f, (float)gWidth / (float)gHeight, 1.0f, 1000.0f);
+
+		glMatrixMode(GL_MODELVIEW);
+	}
+
+	if (backFace) {
+		glEnable(GL_CULL_FACE);
+	}
+	else {
+		glDisable(GL_CULL_FACE);
+	}
+	if (ZBuffer) {
+		glEnable(GL_DEPTH_TEST);
+	}
+	else {
+		glDisable(GL_DEPTH_TEST);
+	}
+
 }
 
 void keyInput(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -200,14 +303,12 @@ bool initScene()
 
 int main(void)
 {
-	gWidth = 1200;
-	gHeight = 680;
+	gWidth = 1600;
+	gHeight = 900;
 	picked = 0;
 
 	if (!initGlfw() || !initScene() || !initUserInterface())
 		return EXIT_FAILURE;
-
-	glEnable(GL_DEPTH_TEST);
 
 	reshape(gWindow, gWidth, gHeight);
 

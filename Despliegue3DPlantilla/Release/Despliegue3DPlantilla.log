@@ -1,11 +1,7 @@
-﻿  BoundingBox.cpp
-  Main.cpp
-  Model.cpp
-  ObjLoader.cpp
-  OffLoader.cpp
-  SOff.cpp
-  UserInterface.cpp
+﻿  Normal.cpp
   Generando código
-  All 438 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  3 of 577 functions ( 0.5%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    2 functions had inline decision re-evaluated but remain unchanged
   Generación de código finalizada
   Despliegue3DPlantilla.vcxproj -> C:\Users\Leonardo\Desktop\universidad\Despliegue3DPlantilla-master\Release\Despliegue3DPlantilla.exe
