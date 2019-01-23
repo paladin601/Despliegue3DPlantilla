@@ -294,7 +294,7 @@ bool initScene()
 	if (!soff->load("../files/cube.soff"))
 		return false;
 
-	if (!offLoader->load("../files/Batman.obj"))
+	if (!offLoader->load("../files/Umbrella.obj"))
 		return false;
 
 	models.push_back(offLoader);
