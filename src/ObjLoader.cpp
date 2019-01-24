@@ -75,9 +75,9 @@ bool ObjLoader::load(string path)
 	file.close();
 	middlePoint();
 	normalize();
-	createList();
 	boundingBox = new BoundingBox(min, max);
 	normals = new Normal(mVertices, mFaces, mNumOfVertices, mNumOfFaces);
+	createList();
 	return true;
 }
 

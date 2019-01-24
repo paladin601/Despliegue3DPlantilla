@@ -24,7 +24,7 @@ private:
 	int pick;
 	float mModelColor[3], mBoundingBoxColor[3], mPointColor[3], mFillColor[3], mNormalsFacesColor[3], mNormalsVerticesColor[3];
 	bool boundingBoxCheck, fillCheck, pointCheck, wireCheck, normalsFacesCheck, normalsVerticesCheck;
-	bool backFace, zBuffer, camera;
+	bool backFace, zBuffer, camera,light;
 
 public:
 	///Method to obtain the only instance of the calls
@@ -69,7 +69,8 @@ public:
 	bool getNormalsFacesCheck();
 	void setNormalsVerticesCheck(bool);
 	bool getNormalsVerticesCheck();
-
+	
+	bool getLightsCheck();
 	bool getBackFaceCheck();
 	bool getZBufferCheck();
 	bool getCameraCheck();

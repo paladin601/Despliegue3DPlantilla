@@ -92,6 +92,7 @@ void CModel::createList() {
 		glVertex3f(mVertices[(int)mFaces[i].x].x, mVertices[(int)mFaces[i].x].y, mVertices[(int)mFaces[i].x].z);
 		glVertex3f(mVertices[(int)mFaces[i].y].x, mVertices[(int)mFaces[i].y].y, mVertices[(int)mFaces[i].y].z);
 		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
+		normals->displayNormalFacesglm(i);
 		glEnd();
 	}
 	glEndList();

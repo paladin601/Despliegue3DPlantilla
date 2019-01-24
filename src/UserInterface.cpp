@@ -46,7 +46,7 @@ CUserInterface::CUserInterface()
 	mModelRotation[0] = mModelRotation[1] = mModelRotation[2] = 0;
 	mModelRotation[3] = 1;
 	zBuffer = fillCheck = boundingBoxCheck = true;
-	camera = backFace = false;
+	light=camera = backFace = false;
 	normalsFacesCheck = normalsVerticesCheck = pointCheck = wireCheck = false;
 
 
@@ -64,6 +64,8 @@ CUserInterface::CUserInterface()
 	TwAddVarRW(mUserInterface, "Orthographic Camera", TW_TYPE_BOOLCPP, &camera, "group='Disabled - Enabled'");
 	TwAddVarRW(mUserInterface, "BackFace", TW_TYPE_BOOLCPP, &backFace, "group='Disabled - Enabled'");
 	TwAddVarRW(mUserInterface, "ZBuffer", TW_TYPE_BOOLCPP, &zBuffer, "group='Disabled - Enabled'");
+	
+	TwAddVarRW(mUserInterface, "Enabled", TW_TYPE_BOOLCPP, &light, "group='Lights'");
 
 
 	TwAddVarRW(mUserInterface, "Display Faces", TW_TYPE_BOOLCPP, &normalsFacesCheck, "group='Normals'");
@@ -344,6 +346,11 @@ void CUserInterface::setNormalsVerticesCheck(bool a)
 bool CUserInterface::getNormalsVerticesCheck()
 {
 	return normalsVerticesCheck;
+}
+
+bool CUserInterface::getLightsCheck()
+{
+	return light;
 }
 
 bool CUserInterface::getBackFaceCheck()

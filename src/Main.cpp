@@ -17,6 +17,30 @@ int picked;
 bool backFace = false;
 bool camera = false;
 bool ZBuffer = true;
+bool light = false;
+
+
+GLfloat no_mat[] =				{ 0.0f, 0.0f, 0.0f, 1.0f };
+GLfloat mat_ambient[] =			{ 0.7f, 0.7f, 0.7f, 1.0f };
+GLfloat mat_ambient_color[] =	{ 0.8f, 0.8f, 0.2f, 1.0f };
+GLfloat mat_diffuse[] =			{ 0.1f, 0.5f, 0.8f, 1.0f };
+GLfloat mat[] =					{ 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat mat_emission[] =		{ 0.3f, 0.2f, 0.2f, 0.0f };
+GLfloat no_shininess[] =		{ 0.0f };
+GLfloat low_shininess[] =		{ 5.0f };
+GLfloat high_shininess[] =		{ 100.0f };
+
+GLfloat ambient[] =  { 0.4f, 0.4f, 0.4f, 1.0f };
+GLfloat diffuse[] =  { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat position[] = { 0.0f, 3.0f, 2.0f, 0.0f };
+GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+GLfloat light_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+GLfloat light_specular[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+GLfloat light_position[] = { 15.0f, 15.0f, 15.0f, 10.0f };
+GLfloat light_direction[] = { 0.0f, 0.0f, 0.0f };
+GLfloat shininess[] = { 15.0f, -15.0f, -15.0f, 10.0f };
+
 
 void updateUserInterface()
 {
@@ -24,14 +48,16 @@ void updateUserInterface()
 	bool abackFace = userInterface->getBackFaceCheck();
 	bool aZBuffer = userInterface->getZBufferCheck();
 	bool acamera = userInterface->getCameraCheck();
-	if (abackFace != backFace || acamera != camera || aZBuffer != ZBuffer) {
+	bool alight = userInterface->getLightsCheck();
+	if (abackFace != backFace || acamera != camera || aZBuffer != ZBuffer || alight != light) {
 		backFace = abackFace;
 		camera = acamera;
-		ZBuffer =aZBuffer;
+		ZBuffer = aZBuffer;
+		light = alight;
 		change_view();
 	}
 
-	if (a==picked) {
+	if (a == picked) {
 		models[picked]->setTranslation(userInterface->getTranslation());
 		models[picked]->setScale(userInterface->getScale());
 		models[picked]->setRotation(userInterface->getRotation());
@@ -94,6 +120,27 @@ void change_view() {
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+	if (light) {
+
+
+
+
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
+		glLightfv(GL_LIGHT1, GL_SHININESS, shininess);
+		glLightfv(GL_LIGHT1, GL_POSITION, position);
+		glLightfv(GL_LIGHT1, GL_CONSTANT_ATTENUATION, light_direction);
+
+		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_LIGHT1);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
+	}
+
 	if (backFace) {
 		glEnable(GL_CULL_FACE);
 	}
@@ -131,7 +178,11 @@ void display()
 		getMatriz4x4(rotation, matriz);
 		glMultMatrixf(matriz);
 		glTranslatef(translation.x, translation.y, translation.z);
-
+		glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, mat);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, mat);
+		glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION, no_mat);
 		models[i]->display();
 		glPopMatrix();
 	}
@@ -172,7 +223,7 @@ void reshape(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, gWidth, gHeight);
 
 	userInterface->reshape();
-
+	glShadeModel(GL_SMOOTH);
 	if (camera) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -188,12 +239,22 @@ void reshape(GLFWwindow *window, int width, int height)
 		glMatrixMode(GL_MODELVIEW);
 	}
 
+	if (light) {
+		glEnable(GL_LIGHTING);
+		glEnable(GL_COLOR_MATERIAL);
+	}
+	else {
+		glDisable(GL_LIGHTING);
+		glDisable(GL_COLOR_MATERIAL);
+	}
+
 	if (backFace) {
 		glEnable(GL_CULL_FACE);
 	}
 	else {
 		glDisable(GL_CULL_FACE);
 	}
+
 	if (ZBuffer) {
 		glEnable(GL_DEPTH_TEST);
 	}
@@ -288,16 +349,12 @@ bool initUserInterface()
 
 bool initScene()
 {
-	ObjLoader* offLoader = new ObjLoader();
+	ObjLoader* objLoader = new ObjLoader();
 
-	CSOff* soff = new CSOff();
-	if (!soff->load("../files/cube.soff"))
+	if (!objLoader->load("../files/Umbrella.obj"))
 		return false;
 
-	if (!offLoader->load("../files/Umbrella.obj"))
-		return false;
-
-	models.push_back(offLoader);
+	models.push_back(objLoader);
 	return true;
 }
 

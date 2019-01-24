@@ -30,5 +30,8 @@ public:
 	float* getColor();
 	void setColorFaces(float *);
 	float* getColorFaces();
+
+	void displayNormalVerticesglm(int);
+	void displayNormalFacesglm(int);
 };
 

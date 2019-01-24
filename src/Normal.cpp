@@ -23,9 +23,16 @@ Normal::Normal(vector<glm::vec3> Vertices, vector<glm::vec3> Faces, int nVertice
 		r1 = Vertices[(int)Faces[i].y] - Vertices[(int)Faces[i].x];
 		r2 = Vertices[(int)Faces[i].z] - Vertices[(int)Faces[i].x];
 		normal = glm::normalize(glm::cross(r1, r2));
-		prom[(int)Faces[i].x] += normal;
-		prom[(int)Faces[i].y] += normal;
-		prom[(int)Faces[i].z] += normal;
+		
+		prom[(int)Faces[i].x].x += normal.x;
+		prom[(int)Faces[i].x].y += normal.y;
+		prom[(int)Faces[i].x].z += normal.z;
+		prom[(int)Faces[i].y].x += normal.x;
+		prom[(int)Faces[i].y].y += normal.y;
+		prom[(int)Faces[i].y].z += normal.z;
+		prom[(int)Faces[i].z].x += normal.x;
+		prom[(int)Faces[i].z].y += normal.y;
+		prom[(int)Faces[i].z].z += normal.z;
 		normalCaras.push_back(normal);
 		center.x = (Vertices[(int)Faces[i].x].x + Vertices[(int)Faces[i].y].x + Vertices[(int)Faces[i].z].x) / 3.0f;
 		center.y = (Vertices[(int)Faces[i].x].y + Vertices[(int)Faces[i].y].y + Vertices[(int)Faces[i].z].y) / 3.0f;
@@ -36,7 +43,7 @@ Normal::Normal(vector<glm::vec3> Vertices, vector<glm::vec3> Faces, int nVertice
 		prom[j].x /= (float)cont[j];
 		prom[j].y /= (float)cont[j];
 		prom[j].z /= (float)cont[j];
-		normalVertices.push_back(glm::normalize(prom[j]));
+		normalVertices.push_back(prom[j]);
 	}
 	createList(Vertices);
 	createListFaces();
@@ -113,4 +120,14 @@ void Normal::setColorFaces(float* color)
 float * Normal::getColorFaces()
 {
 	return mColorFaces;
+}
+
+void Normal::displayNormalVerticesglm(int i)
+{
+	glNormal3f(normalVertices[i].x, normalVertices[i].y, normalVertices[i].z);
+}
+
+void Normal::displayNormalFacesglm(int i)
+{
+	glNormal3f(normalCaras[i].x, normalCaras[i].y, normalCaras[i].z);
 }
