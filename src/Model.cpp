@@ -73,8 +73,11 @@ void CModel::displayBeginEnd() {
 	{
 		glBegin(GL_TRIANGLES);
 		glVertex3f(mVertices[(int)mFaces[i].x].x, mVertices[(int)mFaces[i].x].y, mVertices[(int)mFaces[i].x].z);
+		normals->displayNormalVerticesglm((int)mFaces[i].x);
 		glVertex3f(mVertices[(int)mFaces[i].y].x, mVertices[(int)mFaces[i].y].y, mVertices[(int)mFaces[i].y].z);
+		normals->displayNormalVerticesglm((int)mFaces[i].y);
 		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
+		normals->displayNormalVerticesglm((int)mFaces[i].z);
 		glEnd();
 	}
 }
@@ -90,9 +93,11 @@ void CModel::createList() {
 	{
 		glBegin(GL_TRIANGLES);
 		glVertex3f(mVertices[(int)mFaces[i].x].x, mVertices[(int)mFaces[i].x].y, mVertices[(int)mFaces[i].x].z);
+		normals->displayNormalVerticesglm((int)mFaces[i].x);
 		glVertex3f(mVertices[(int)mFaces[i].y].x, mVertices[(int)mFaces[i].y].y, mVertices[(int)mFaces[i].y].z);
+		normals->displayNormalVerticesglm((int)mFaces[i].y);
 		glVertex3f(mVertices[(int)mFaces[i].z].x, mVertices[(int)mFaces[i].z].y, mVertices[(int)mFaces[i].z].z);
-		normals->displayNormalFacesglm(i);
+		normals->displayNormalVerticesglm((int)mFaces[i].z);
 		glEnd();
 	}
 	glEndList();

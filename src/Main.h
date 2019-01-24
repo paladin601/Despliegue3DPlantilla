@@ -12,6 +12,8 @@ void getMatriz4x4(glm::vec4, float*);
 
 void display();
 
+void changeLight();
+
 void change_view();
 
 void reshape(GLFWwindow *window, int width, int height);

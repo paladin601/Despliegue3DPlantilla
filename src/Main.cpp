@@ -13,11 +13,12 @@ GLFWwindow *gWindow;
 int gWidth, gHeight;
 CUserInterface * userInterface;
 vector <CModel *> models;
-int picked;
+int picked,pickedLight;
 bool backFace = false;
 bool camera = false;
 bool ZBuffer = true;
 bool light = false;
+bool flat = false;
 
 
 GLfloat no_mat[] =				{ 0.0f, 0.0f, 0.0f, 1.0f };
@@ -34,12 +35,18 @@ GLfloat ambient[] =  { 0.4f, 0.4f, 0.4f, 1.0f };
 GLfloat diffuse[] =  { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat specular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 GLfloat position[] = { 0.0f, 3.0f, 2.0f, 0.0f };
+
+GLfloat ambient2[] = { 0.4f, 0.2f, 0.4f, 1.0f };
+GLfloat diffuse2[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+GLfloat specular2[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+GLfloat position2[] = { 2.0f, 3.0f, 0.0f, 0.0f };
+
 GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 GLfloat light_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
 GLfloat light_specular[] = { 0.2f, 0.2f, 0.2f, 1.0f };
 GLfloat light_position[] = { 15.0f, 15.0f, 15.0f, 10.0f };
 GLfloat light_direction[] = { 0.0f, 0.0f, 0.0f };
-GLfloat shininess[] = { 15.0f, -15.0f, -15.0f, 10.0f };
+GLfloat shininess =  15.0f;
 
 
 void updateUserInterface()
@@ -49,12 +56,37 @@ void updateUserInterface()
 	bool aZBuffer = userInterface->getZBufferCheck();
 	bool acamera = userInterface->getCameraCheck();
 	bool alight = userInterface->getLightsCheck();
-	if (abackFace != backFace || acamera != camera || aZBuffer != ZBuffer || alight != light) {
+	bool aflat = userInterface->getFlatCheck();
+	
+	if (abackFace != backFace || acamera != camera || aZBuffer != ZBuffer || alight != light || aflat!=flat) {
 		backFace = abackFace;
 		camera = acamera;
 		ZBuffer = aZBuffer;
 		light = alight;
+		flat = aflat;
 		change_view();
+	}
+	int aux = userInterface->getLightPicked();
+	if (aux != pickedLight) {
+		pickedLight = aux;
+		switch (pickedLight)
+		{
+		case 0:
+			userInterface->setLightPosition(position);
+			userInterface->setLightAmbient(ambient);
+			userInterface->setLightDiffuse(diffuse);
+			userInterface->setLightSpecular(specular);
+			break;
+		case 1:
+			userInterface->setLightPosition(position2);
+			userInterface->setLightAmbient(ambient2);
+			userInterface->setLightDiffuse(diffuse2);
+			userInterface->setLightSpecular(specular2);
+			break;
+		}
+	}
+	else {
+		changeLight();
 	}
 
 	if (a == picked) {
@@ -104,6 +136,63 @@ void updateUserInterface()
 
 }
 
+void changeLight() {
+	GLfloat *a;
+	switch (pickedLight)
+	{
+	case 0:
+		a =userInterface->getLightPosition();
+		position[0] = a[0];
+		position[1] = a[1];
+		position[2] = a[2];
+		a=userInterface->getLightAmbient();
+		ambient[0] = a[0];
+		ambient[1] = a[1];
+		ambient[2] = a[2];
+		a=userInterface->getLightDiffuse();
+		diffuse[0] = a[0];
+		diffuse[1] = a[1];
+		diffuse[2] = a[2];
+		a=userInterface->getLightSpecular();
+		specular[0] = a[0];
+		specular[1] = a[1];
+		specular[2] = a[2];
+		glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuse);
+		glLightfv(GL_LIGHT0, GL_SPECULAR, specular);
+		glLightfv(GL_LIGHT0, GL_POSITION, position);
+		glLightf(GL_LIGHT0, GL_SHININESS, shininess);
+		break;
+	case 1:
+		a = userInterface->getLightPosition();
+		position2[0] = a[0];
+		position2[1] = a[1];
+		position2[2] = a[2];
+		a = userInterface->getLightAmbient();
+		ambient2[0] = a[0];
+		ambient2[1] = a[1];
+		ambient2[2] = a[2];
+		a = userInterface->getLightDiffuse();
+		diffuse2[0] = a[0];
+		diffuse2[1] = a[1];
+		diffuse2[2] = a[2];
+		a = userInterface->getLightSpecular();
+		specular2[0] = a[0];
+		specular2[1] = a[1];
+		specular2[2] = a[2];
+		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient2);
+		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse2);
+		glLightfv(GL_LIGHT1, GL_SPECULAR, specular2);
+		glLightfv(GL_LIGHT1, GL_POSITION, position2);
+		glLightf(GL_LIGHT1, GL_SHININESS, shininess);
+		break;
+	}
+	glDisable(GL_LIGHT0);
+	glDisable(GL_LIGHT1);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHT1);
+}
+
 void change_view() {
 	if (camera) {
 		glMatrixMode(GL_PROJECTION);
@@ -119,24 +208,23 @@ void change_view() {
 
 		glMatrixMode(GL_MODELVIEW);
 	}
+	if (flat) {
+		glShadeModel(GL_SMOOTH);
+	}
+	else {
+		glShadeModel(GL_FLAT);
+	}
 
 	if (light) {
 
-
-
-
-		glLightfv(GL_LIGHT1, GL_AMBIENT, ambient);
-		glLightfv(GL_LIGHT1, GL_DIFFUSE, diffuse);
-		glLightfv(GL_LIGHT1, GL_SPECULAR, specular);
-		glLightfv(GL_LIGHT1, GL_SHININESS, shininess);
-		glLightfv(GL_LIGHT1, GL_POSITION, position);
-		glLightfv(GL_LIGHT1, GL_CONSTANT_ATTENUATION, light_direction);
-
 		glEnable(GL_LIGHTING);
 		glEnable(GL_COLOR_MATERIAL);
+		glEnable(GL_LIGHT0);
 		glEnable(GL_LIGHT1);
 	}
 	else {
+		glDisable(GL_LIGHT0);
+		glDisable(GL_LIGHT1);
 		glDisable(GL_LIGHTING);
 		glDisable(GL_COLOR_MATERIAL);
 	}
@@ -223,44 +311,9 @@ void reshape(GLFWwindow *window, int width, int height)
 	glViewport(0, 0, gWidth, gHeight);
 
 	userInterface->reshape();
-	glShadeModel(GL_SMOOTH);
-	if (camera) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(-(float)gWidth / 100.0f, (float)gWidth / 100.0f, -(float)gHeight / 100.0f, (float)gHeight / 100.0f, 0.01f, 100.0f);
 
-		glMatrixMode(GL_MODELVIEW);
-	}
-	else {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		gluPerspective(45.0f, (float)gWidth / (float)gHeight, 1.0f, 1000.0f);
-
-		glMatrixMode(GL_MODELVIEW);
-	}
-
-	if (light) {
-		glEnable(GL_LIGHTING);
-		glEnable(GL_COLOR_MATERIAL);
-	}
-	else {
-		glDisable(GL_LIGHTING);
-		glDisable(GL_COLOR_MATERIAL);
-	}
-
-	if (backFace) {
-		glEnable(GL_CULL_FACE);
-	}
-	else {
-		glDisable(GL_CULL_FACE);
-	}
-
-	if (ZBuffer) {
-		glEnable(GL_DEPTH_TEST);
-	}
-	else {
-		glDisable(GL_DEPTH_TEST);
-	}
+	change_view();
+	changeLight();
 
 }
 
@@ -363,6 +416,7 @@ int main(void)
 	gWidth = 1600;
 	gHeight = 900;
 	picked = 0;
+	pickedLight = 0;
 
 	if (!initGlfw() || !initScene() || !initUserInterface())
 		return EXIT_FAILURE;

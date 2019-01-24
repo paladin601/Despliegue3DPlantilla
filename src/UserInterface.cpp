@@ -46,9 +46,16 @@ CUserInterface::CUserInterface()
 	mModelRotation[0] = mModelRotation[1] = mModelRotation[2] = 0;
 	mModelRotation[3] = 1;
 	zBuffer = fillCheck = boundingBoxCheck = true;
-	light=camera = backFace = false;
-	normalsFacesCheck = normalsVerticesCheck = pointCheck = wireCheck = false;
+	flat = light=camera = backFace = false;
+	pickLight = 0;
+	ambient[0] = ambient[1] = ambient[2] = 0.4f;
+	diffuse[0]= diffuse[1]= diffuse[2]=diffuse[3] =ambient[3]= 1.0f;
+	specular[0] = specular[1] = specular[2] = specular[3] =  1.0f;
+	position[0] = position[3] = 0.0f;
+	position[1] = 3.0f;
+	position[2] = 2.0f;
 
+	normalsFacesCheck = normalsVerticesCheck = pointCheck = wireCheck = false;
 
 	TwEnumVal DeployType[] = { { GL_BEGIN_GL_END, "Gl Begin / Gl End" },{ DISPLAY_LIST, "Display List" },{ VERTEX_POINTER, "Vertex Pointer" },{ VBO, "VBO" } };
 	TwType DeployTwType = TwDefineEnum("DeployType", DeployType, 4);
@@ -64,12 +71,31 @@ CUserInterface::CUserInterface()
 	TwAddVarRW(mUserInterface, "Orthographic Camera", TW_TYPE_BOOLCPP, &camera, "group='Disabled - Enabled'");
 	TwAddVarRW(mUserInterface, "BackFace", TW_TYPE_BOOLCPP, &backFace, "group='Disabled - Enabled'");
 	TwAddVarRW(mUserInterface, "ZBuffer", TW_TYPE_BOOLCPP, &zBuffer, "group='Disabled - Enabled'");
+
 	
 	TwAddVarRW(mUserInterface, "Enabled", TW_TYPE_BOOLCPP, &light, "group='Lights'");
-
+	TwAddVarRW(mUserInterface, "Flat", TW_TYPE_BOOLCPP, &flat, "group='Lights'");
+	TwAddVarRW(mUserInterface, "Lights Select", TW_TYPE_INT32, &pickLight, "group='Lights' min='0' max='1'");
+	TwAddSeparator(mUserInterface, "", " group='Lights'");
+	TwAddVarRW(mUserInterface, "LX", TW_TYPE_FLOAT, &position[0], " group='Lights' step=0.01 min=-500.0 max=500.0");
+	TwAddVarRW(mUserInterface, "LY", TW_TYPE_FLOAT, &position[1], " group='Lights' step=0.01 min=-500.0 max=500.0");
+	TwAddVarRW(mUserInterface, "LZ", TW_TYPE_FLOAT, &position[2], " group='Lights' step=0.01 min=-500.0 max=500.0");
+	TwAddSeparator(mUserInterface, "", " group='Lights'");
+	TwAddVarRW(mUserInterface, "Ambient X", TW_TYPE_FLOAT, &ambient[0], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Ambient Y", TW_TYPE_FLOAT, &ambient[1], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Ambient Z", TW_TYPE_FLOAT, &ambient[2], " group='Lights' step=0.1 min=0 max=1");
+	TwAddSeparator(mUserInterface, "", " group='Lights'");
+	TwAddVarRW(mUserInterface, "Diffuse X", TW_TYPE_FLOAT, &diffuse[0], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Diffuse Y", TW_TYPE_FLOAT, &diffuse[1], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Diffuse Z", TW_TYPE_FLOAT, &diffuse[2], " group='Lights' step=0.1 min=0 max=1");
+	TwAddSeparator(mUserInterface, "", " group='Lights'");
+	TwAddVarRW(mUserInterface, "Specular X", TW_TYPE_FLOAT, &specular[0], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Specular Y", TW_TYPE_FLOAT, &specular[1], " group='Lights' step=0.1 min=0 max=1");
+	TwAddVarRW(mUserInterface, "Specular Z", TW_TYPE_FLOAT, &specular[2], " group='Lights' step=0.1 min=0 max=1");
 
 	TwAddVarRW(mUserInterface, "Display Faces", TW_TYPE_BOOLCPP, &normalsFacesCheck, "group='Normals'");
 	TwAddVarRW(mUserInterface, "Color Faces", TW_TYPE_COLOR3F, &mNormalsFacesColor, " group='Normals'");
+	TwAddSeparator(mUserInterface, "", " group='Normals'");
 	TwAddVarRW(mUserInterface, "Display Vertices", TW_TYPE_BOOLCPP, &normalsVerticesCheck, "group='Normals'");
 	TwAddVarRW(mUserInterface, "Color Vertices", TW_TYPE_COLOR3F, &mNormalsVerticesColor, " group='Normals'");
 
@@ -288,6 +314,60 @@ float * CUserInterface::getColorNormalsVertices()
 	return mNormalsVerticesColor;
 }
 
+int CUserInterface::getLightPicked()
+{
+	return pickLight;
+}
+
+void CUserInterface::setLightPosition(GLfloat * a)
+{
+	position[0] = a[0];
+	position[1] = a[1];
+	position[2] = a[2];
+}
+
+GLfloat * CUserInterface::getLightPosition()
+{
+	return position;
+}
+
+void CUserInterface::setLightSpecular(GLfloat * a)
+{
+	specular[0] = a[0];
+	specular[1] = a[1];
+	specular[2] = a[2];
+}
+
+GLfloat * CUserInterface::getLightSpecular()
+{
+	return specular;
+}
+
+void CUserInterface::setLightDiffuse(GLfloat * a)
+{
+	diffuse[0] = a[0];
+	diffuse[1] = a[1];
+	diffuse[2] = a[2];
+}
+
+GLfloat * CUserInterface::getLightDiffuse()
+{
+	return diffuse;
+}
+
+void CUserInterface::setLightAmbient(GLfloat * a)
+{
+	ambient[0] = a[0];
+	ambient[1] = a[1];
+	ambient[2] = a[2];
+}
+
+GLfloat * CUserInterface::getLightAmbient()
+{
+	return ambient;
+}
+
+
 void CUserInterface::setBoundingBoxCheck(bool a)
 {
 	boundingBoxCheck = a;
@@ -346,6 +426,11 @@ void CUserInterface::setNormalsVerticesCheck(bool a)
 bool CUserInterface::getNormalsVerticesCheck()
 {
 	return normalsVerticesCheck;
+}
+
+bool CUserInterface::getFlatCheck()
+{
+	return flat;
 }
 
 bool CUserInterface::getLightsCheck()
