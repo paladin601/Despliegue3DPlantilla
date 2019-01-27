@@ -84,11 +84,11 @@ bool OffLoader::load(string path)
 		}
 		mNumOfFaces = cont;
 		file.close();
+		normals = new Normal(mVertices, mFaces, mNumOfVertices, mNumOfFaces);
 		middlePoint();
 		normalize();
 		createList();
 		boundingBox = new BoundingBox(min, max);
-		normals = new Normal(mVertices, mFaces, mNumOfVertices, mNumOfFaces);
 		return true;
 	}
 }
